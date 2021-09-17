@@ -1,11 +1,14 @@
 var diodes = [];
 var imageSize = 64;
 var hasStarted = false;
+var fps = 10;
 
 var posX, posY;
 var nextX, nextY;
 var prevX = [], prevY = [];
 var resetButton;
+var monoSynth;
+var notes = ['Fb4', 'G4', 'C4', 'E3'];
 
 function make2Darray(rows) {
     var arr = [];
@@ -30,20 +33,22 @@ function reset() {
 
 function setup() {
     createCanvas(1080, 1080);
+    background(200, 200, 200);
+    frameRate(fps);
     resetButton = new Clickable();
     resetButton.locate(50, 50);
     resetButton.text = "Reset";
 
     resetButton.onPress = reset;
+    monoSynth = new p5.MonoSynth();
+    monoSynth.amp(200);
 
     var maxDiodesLength = -69;
     for (var i = 0; i < diodesDir.length; ++i) {
-        maxDiodesLength = Math.max(maxDiodesLength, diodesDir[i].length);
+        maxDiodesLength = maxDiodesLength > diodesDir[i].length ? maxDiodesLength : diodesDir[i].length;
     }
 
     diodes = make2Darray(diodesDir.length, maxDiodesLength);
-
-    textSize(width / 3);
 
     for (var i = 0; i < diodesDir.length; ++i) {
         for (var j = 0; j < diodesDir[i].length; ++j) {
@@ -52,15 +57,13 @@ function setup() {
             }
         }
     }
+
+    textSize(20)
+    text('Control\n\nSPACE atau WASD untuk mulai\nWASD untuk bergerak', 680, 50);
 }
 
 function draw() {
-    background(200, 200, 200);
-
     resetButton.draw();
-
-    textSize(30)
-    text('Control\n\n SPACE atau WASD untuk mulai\nWASD untuk bergerak', 820, 80);
 
     for (var i = 0; i < 26; i++) {
         for (var j = 0; j < 26; j++) {
@@ -81,6 +84,9 @@ function keyPressed() {
     }
 
     if (!hasStarted) return;
+
+    if ([32, 65, 68, 83, 87].indexOf(keyCode) !== -1)
+        playSynth();
 
     // jika dipencet atas
     if (keyCode === 87) {
@@ -232,4 +238,18 @@ function keyPressed() {
 
 function activateDiode(x, y) {
     diodes[x][y].activate();
+}
+
+function playSynth() {
+    userStartAudio();
+
+    var note = notes[(Math.random() * notes.length) >> 0];
+    // note velocity (volume, from 0 to 1)
+    var velocity = Math.random();
+    // time from now (in seconds)
+    var time = 0;
+    // note duration (in seconds)
+    var dur = 1 / 6;
+
+    monoSynth.play(note, velocity, time, dur);
 }

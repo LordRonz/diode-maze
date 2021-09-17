@@ -6,9 +6,9 @@ function Diode(x, y, dir) {
     this.dir = dir;
     this.on = false;
 
-    var twoThirdImgSize = Math.round(imageSize / 3 * 2);
-    var oneThirdImgSize = Math.round(imageSize / 3);
-    var halfImgSize = Math.round(imageSize / 2);
+    var twoThirdImgSize = (imageSize / 3 * 2) + 0.5 >> 0;
+    var oneThirdImgSize = (imageSize / 3) + 0.5 >> 0;
+    var halfImgSize = (imageSize / 2) + 0.5 >> 0;
 
     this.display = function () {
         // Finish
